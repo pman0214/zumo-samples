@@ -1,0 +1,10 @@
+*.o
+*.elf
+*.bin
+*.a
+*.d
+*.srec
+*.syms
+*.map
+*.timestamp
+patches/
