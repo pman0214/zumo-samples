@@ -10,6 +10,8 @@
 .cfgファイルの名前はMakefileで指定できる。
 Makefileでは自分が使用するライブラリをincludeする。
 
+TrueSTUDIOを使ってビルドする場合は、各Makefileの `USE_TRUESTUDIO` を `true` に変更すること。
+
 ## サンプル
 
 ``truestudio/camtank/app.cpp`` に入っている。
