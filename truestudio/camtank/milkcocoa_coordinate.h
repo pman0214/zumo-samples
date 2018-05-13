@@ -13,7 +13,7 @@ typedef unsigned char   uint8_t;
 /*======================================================================
  * constants
  *======================================================================*/
-#define TASKPRI_MAIN        8
+#define TASKPRI_MAIN        10
 #define TASKPRI_ST_TRAN     8
 #define TASKPRI_ACC_MON     2
 #define TASKPRI_NTF_MLK     2

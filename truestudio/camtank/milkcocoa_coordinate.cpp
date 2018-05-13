@@ -89,7 +89,7 @@ static void on_mlk_push(MQTT::MessageData& md)
     {
         pc.printf("onpush:control\r\n");
         event = EV_CTRL_FWD;
-        act_tsk(TASKID_ST_TRAN);
+        wup_tsk(TASKID_ST_TRAN);
     }
     return;
 }
@@ -220,12 +220,12 @@ void task_main(intptr_t exinf)
     if (entry_init() < 0)
     {
         event = EV_FATAL_ERR;
-        act_tsk(TASKID_ST_TRAN);
+        wup_tsk(TASKID_ST_TRAN);
         ext_tsk();
     }
 
     event = EV_INIT_DONE;
-    act_tsk(TASKID_ST_TRAN);
+    wup_tsk(TASKID_ST_TRAN);
 
     for (;;)
     {
@@ -243,22 +243,27 @@ void task_st_tran(intptr_t exinf)
     state_t new_state;
     int (*func)();
 
-    func = NULL;
-    pre_state = state;
-
-    new_state = state_trans_tbl[event][pre_state];
-    if (new_state != ST_NONE)
+    for (;;)
     {
-        state = new_state;
-        pc.printf("state=%x>%x\r\n", pre_state, state);
-        func = tran_func[new_state].func;
-    }
+        slp_tsk();
 
-    /* call state-entry function */
-    if (func)
-    {
-        (*func)();
-        act_tsk(TASKID_NTF_MLK);
+        func = NULL;
+        pre_state = state;
+
+        new_state = state_trans_tbl[event][pre_state];
+        if (new_state != ST_NONE)
+        {
+            state = new_state;
+            pc.printf("state=%x>%x\r\n", pre_state, state);
+            func = tran_func[new_state].func;
+        }
+
+        /* call state-entry function */
+        if (func)
+        {
+            (*func)();
+            act_tsk(TASKID_NTF_MLK);
+        }
     }
 
     ext_tsk();
@@ -287,7 +292,7 @@ void task_acc_mon(intptr_t exinf)
             if (diffsum_x > START_ACC_THR)
             {
                 event = EV_ACC_DETECT;
-                act_tsk(TASKID_ST_TRAN);
+                wup_tsk(TASKID_ST_TRAN);
             }
 
             diffsum_x = 0;
@@ -327,5 +332,5 @@ void cyc_led_blink(intptr_t exinf)
 void alm_stop(intptr_t exinf)
 {
     event = EV_FORCE_STOP;
-    iact_tsk(TASKID_ST_TRAN);
+    iwup_tsk(TASKID_ST_TRAN);
 }
